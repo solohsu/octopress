@@ -1,0 +1,81 @@
+---
+layout: post
+title: "Java 8 简明教程(8): map"
+date: 2014-04-04 17:03:54 +0800
+comments: true
+categories: 
+- Java 8
+---
+
+### Map ###
+
+虽然map是不支持stream的。但是Java 8中为map增加了多种很有用的方法，方便我们执行各种针对map的常见任务。
+
+<!--more-->
+
+{% codeblock lang:java %}
+
+	Map<Integer, String> map = new HashMap<>();
+	
+	for (int i = 0; i < 10; i++) {
+	    map.putIfAbsent(i, "val" + i);
+	}
+	
+	map.forEach((id, val) -> System.out.println(val));
+
+{% endcodeblock %}
+
+上面的代码很简明：`putIfAbsent`方法使我们不用再写额外的if null检查语句了；`forEach`方法接受一个「消费者」，对map中的每一个值执行相应操作。
+
+下面的例子展示了如何使用函数来对指定的value进行计算：
+
+{% codeblock lang:java %}
+
+	map.computeIfPresent(3, (num, val) -> val + num);
+	map.get(3);             // val33
+	
+	map.computeIfPresent(9, (num, val) -> null);
+	map.containsKey(9);     // false
+	
+	map.computeIfAbsent(23, num -> "val" + num);
+	map.containsKey(23);    // true
+	
+	map.computeIfAbsent(3, num -> "bam");
+	map.get(3);             // val33
+
+
+{% endcodeblock %}
+
+下面来看一下如何移除完全匹配给定的key/value的entries：
+
+{% codeblock lang:java %}
+	
+	map.remove(3, "val3");
+	map.get(3);             // val33
+	
+	map.remove(3, "val33");
+	map.get(3);             // null
+
+{% endcodeblock %}
+
+另外一个很有用的方法：
+
+{% codeblock lang:java %}
+	
+	map.getOrDefault(42, "not found");  // not found
+
+{% endcodeblock %}
+
+进行entries的合并也非常简单：
+
+{% codeblock lang:java %}
+	
+	map.merge(9, "val9", (value, newValue) -> value.concat(newValue));
+	map.get(9);             // val9
+	
+	map.merge(9, "concat", (value, newValue) -> value.concat(newValue));
+	map.get(9);             // val9concat
+
+{% endcodeblock %}
+
+`merge`方法在给定的key不存在时，将key/value添加进map中，否则对现有的value进行修改。
