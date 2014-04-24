@@ -42,7 +42,7 @@ module Jekyll
       self.data['category']    = category
       # Set the title for this page.
       title_prefix             = site.config['category_title_prefix'] || 'Category: '
-      self.data['title']       = "#{title_prefix}#{category}"
+      self.data['title']       = "#{title_prefix}#{category}" + "<a href=\"" + "atom.xml" +"\"rel=\"subscribe-rss\" style=\"text-decoration: none\" title=\"Subscribe this Category via RSS\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>"
       # Set the meta-description for this page.
       meta_description_prefix  = site.config['category_meta_description_prefix'] || 'Category: '
       self.data['description'] = "#{meta_description_prefix}#{category}"
