@@ -1,31 +1,19 @@
 # encoding: utf-8
 #
-# Octopress tag cloud generator
+# Octopress category cloud generator
 #
-# Version: 0.3
+# Version: 0.1
 #
-# Copyright (c) 2012 Robby Edwards, http://robbyedwards.com/
-# Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-#
-# Octopress plugin to display tag clouds.
-# Based on https://gist.github.com/1577100 by @tokkonopapa
-#
-# Defines a 'tag_cloud' tag that is rendered by Liquid into a tag cloud:
-#
-#     <div class='cloud'>
-#         {% tag_cloud %}
-#     </div>
-#
-# See README for installation and usage instructions.
+# Copyright (c) 2014 Hsu Shulong, http://solohsu.com/
 
 require 'stringex'
 
 module Jekyll
 
-  class TagCloud < Liquid::Tag
+  class CategoryCloud < Liquid::Tag
     safe = true
 
-    # tag cloud variables - these are setup in 'initialize'
+    # Category cloud variables - these are setup in 'initialize'
     attr_reader :size_min, :size_max, :precision, :unit, :threshold, :limit, :sort, :order, :style, :separator
 
     def initialize(name, params, tokens)
@@ -49,21 +37,21 @@ module Jekyll
     end
 
     def render(context)
-      # get the directory for the tag links
-      dir = context.registers[:site].config['tag_dir'] || 'tags'
+      # get the directory for the category links
+      dir = context.registers[:site].config['category_dir'] || 'categories'
 
-      # get an Array of [tag name, tag count] pairs
-      count = context.registers[:site].tags.map do |name, posts|
+      # get an Array of [category name, category count] pairs
+      count = context.registers[:site].categories.map do |name, posts|
         [name, posts.count] if posts.count >= threshold
       end
 
       # clear nils if any
       count.compact!
 
-      # get the minimum, and maximum tag count
+      # get the minimum, and maximum category count
       min, max = count.map(&:last).minmax
 
-      # map: [[tag name, tag count]] -> [[tag name, tag weight]]
+      # map: [[category name, category count]] -> [[category name, category weight]]
       weighted = count.map do |name, count|
         # logarithmic distribution
         weight = (Math.log(count) - Math.log(min))/(Math.log(max) - Math.log(min))
@@ -165,4 +153,4 @@ module Jekyll
 
 end
 
-Liquid::Template.register_tag('tags_cloud', Jekyll::TagCloud)
+Liquid::Template.register_tag('category_cloud', Jekyll::CategoryCloud)
